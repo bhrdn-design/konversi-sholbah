@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Konversi Kalender Terpadu</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #06241a 0%, #0e3e30 100%);
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            color: #f4e1a1;
+        } 
+        .main-container { 
+            max-width: 550px; width: 100%; 
+            background: rgba(6, 36, 26, 0.95); 
+            backdrop-filter: blur(15px); 
+            border: 2px solid #d4af37; 
+            border-radius: 25px; 
+            padding: 40px 30px; 
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6); 
+            text-align: center; box-sizing: border-box; 
+        }
+        h1 { color: #d4af37; font-family: 'Georgia', serif; font-size: 26px; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 2px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); } 
+        h2 { color: #c0c0c0; font-size: 14px; margin: 0 0 30px 0; border-bottom: 1px solid #d4af37; padding-bottom: 15px; } 
+        .form-block { background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; margin-bottom: 25px; border: 1px solid rgba(212, 175, 55, 0.3); }
+        .block-title { font-size: 14px; font-weight: bold; text-align: left; margin-bottom: 15px; color: #d4af37; display: flex; align-items: center; }
+        .block-title::before { content: "۞"; margin-right: 10px; font-size: 18px; }
+        .input-row { display: flex; gap: 12px; margin-bottom: 15px; }
+        .input-group { flex: 1; text-align: left; }
+        .input-group label { font-size: 10px; display: block; margin-bottom: 5px; font-weight: bold; color: #d4af37; text-transform: uppercase; } 
+        .input-group input { width: 100%; padding: 10px; border: 1px solid #d4af37; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; color: #fff; background: rgba(0,0,0,0.2); }
+        button { color: #06241a; background: linear-gradient(135deg, #d4af37, #b8860b); font-weight: bold; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin-left: 5px; } 
+        button:hover { background: #fff; transform: scale(1.05); }
+        .output-box { background: rgba(212, 175, 55, 0.1); border: 1px solid #d4af37; border-radius: 10px; padding: 15px; margin: 20px 0; color: #fff; text-align: center; line-height: 1.6; font-weight: bold; }
+        .footer { font-size: 12px; color: #d4af37; font-style: italic; margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(212, 175, 55, 0.3); }
+        .pm-detail { color: #d4af37; font-weight: normal; font-size: 0.9em; display: block; border-top: 1px dashed #d4af37; padding-top: 8px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h1>KONVERSI KALENDER</h1>
+    <h2>Oleh : M. SHOLEH BAKHRUDDIN</h2>
+
+    <div class="form-block">
+        <div class="block-title">Input Tanggal Masehi</div>
+        <div class="input-row">
+            <div class="input-group"><label>Tgl</label><input value="20" type="number" id="tglM"></div>
+            <div class="input-group"><label>Bln</label><input value="06" type="number" id="blnM"></div>
+            <div class="input-group"><label>Thn</label><input value="2026" type="number" id="thnM"></div>
+        </div>
+        <button onclick="BtHitungM()">Proses</button> 
+        <button onclick="BtHapusM()">Hapus</button> 
+    </div>
+
+    <div class="output-box" id="Hasil1">Hasil Masehi, Pranoto Mongso, & Saka muncul di sini.</div>
+
+    <div class="form-block">
+        <div class="block-title">Input Tanggal Hijriyah</div>
+        <div class="input-row">
+            <div class="input-group"><label>Tgl</label><input value="04" type="number" id="tglH"></div>
+            <div class="input-group"><label>Bln</label><input value="01" type="number" id="blnH"></div>
+            <div class="input-group"><label>Thn</label><input value="1448" type="number" id="thnH"></div>
+        </div>
+        <button onclick="BtHitungH()">Proses</button> 
+        <button onclick="BtHapusH()">Hapus</button> 
+    </div>
+
+    <div class="output-box" id="Hasil2">Hasil Hijriyah akan muncul di sini.</div>
+
+    <div class="footer">_______ SEMOGA BERMANFAAT _______</div>
+</div>
+
+<script>
+    const Int = x => Math.floor(x);
+    const namaHari = ["Sabtu","Ahad","Senin","Selasa","Rabu","Kamis","Jum'at","Sabtu"];
+    const namaPasaran = ["Kliwon","Legi","Pahing","Pon","Wage","Kliwon"];
+    const namaBulanM = ["Desember","Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+    const namaBulanH = ["Dzulhijjah","Muharram","Shafar","Rabi'ul Awal","Rabi'ul Akhir","Jumadil Awal","Jumadil Akhir","Rajab","Sya'ban","Ramadhan","Syawal","Dzulqo'dah","Dzulhijjah"];
+
+    function getPranotoMongso(d, m) {
+        if ((m == 6 && d >= 23) || (m == 7) || (m == 8 && d <= 2)) return "Kasa: Tanah retak, waktu tepat untuk pengolahan lahan.";
+        if ((m == 8 && d >= 3) || (m == 8 && d <= 25)) return "Karo: Tanah mulai merekah, tanda awal musim kering.";
+        if ((m == 8 && d >= 26) || (m == 9 && d <= 18)) return "Katelu: Anak mengikuti orang tua, mulai masa tanam.";
+        if ((m == 9 && d >= 19) || (m == 10 && d <= 13)) return "Kapat: Air mulai tampak, musim semi mulai tiba.";
+        if ((m == 10 && d >= 14) || (m == 11 && d <= 9)) return "Kalima: Pancuran emas, awal datangnya hujan.";
+        if ((m == 11 && d >= 10) || (m == 12 && d <= 22)) return "Kanem: Berlimpah buah, tanda syukur kepada alam.";
+        if ((m == 12 && d >= 23) || (m == 1) || (m == 2 && d <= 3)) return "Kapitu: Musim hujan lebat/banjir, saatnya waspada.";
+        if ((m == 2 && d >= 4) || (m == 3 && d <= 1)) return "Kawolu: Hewan berkembang biak, alam mulai subur.";
+        if ((m == 3 && d >= 2) || (m == 3 && d <= 26)) return "Kasanga: Burung bertelur, tanda kehidupan baru.";
+        if ((m == 3 && d >= 27) || (m == 4 && d <= 18)) return "Kadasa: Padi menguning, masa mendekati panen.";
+        if ((m == 4 && d >= 19) || (m == 5 && d <= 12)) return "Desta: Musim panen raya, waktu kemakmuran.";
+        if ((m == 5 && d >= 13) || (m == 6 && d <= 22)) return "Sada: Musim kering kembali, persiapan masa tanam baru.";
+        return "Tidak Terdeteksi";
+    }
+
+    function BtHapusM(){ document.getElementById("Hasil1").innerHTML = "Data Terhapus"; }
+    function BtHapusH(){ document.getElementById("Hasil2").innerHTML = "Data Terhapus"; }
+
+    function MiladikeHijri(D, m, Y) {
+        let bulanAsli = m, tahunAsli = Y;
+        let A = Y*10000 + m*100+ D;
+        let G = 2 - Int(Y/100) + Int(Y/400);
+        if (A < 15821015) G = 0;
+        if (m < 3) { Y = Y - 1; m = m + 12; }
+        let Mjd = Int(365.25*(Y+4716)) + Int(30.6001*(m+1)) + D + G - 1524;
+        let H = Mjd - 1948440;
+        let L1 = H + 10632;
+        let N = Int((L1 - 1) / 10631);
+        if (L1 < 1) N = N - 1;
+        let L2 = L1 - 10631 * N + 354;
+        let J = Int(((10985 - L2) / 5316.0)) * Int((50.0 * L2) / 17719) + Int(L2 / 5670.0) * Int((43.0 * L2) / 15238);
+        let L3 = L2 - Int(((30 - J) / 15.0)) * Int((17719.0 * J) / 50) - Int((J / 16.0)) * Int((15238.0 * J) / 43) + 29;
+        let Mh = Int((24.0 * L3) / 709);
+        let Dh = L3 - Int((709.0 * Mh) / 24);
+        let Yh = 30 * N + J - 30;
+        let L = Mjd + 16;
+        let Hr = L % 7;
+        let Ps = L % 5;
+        return `Hari = ${namaHari[Hr]} ${namaPasaran[Ps]}, ${D} ${namaBulanM[bulanAsli]} ${tahunAsli} M / ${Dh} ${namaBulanH[Mh]} ${Yh} H`;
+    }
+
+    function HijrikeMiladi(H, m, Y) {
+        let Hh = Int((11.0 * Y + 3) / 30) + 354 * Y + 30 * m - Int((m - 1) / 2.0) + H - 385;
+        if (Y < 0) Hh = Hh - 1;
+        const Z = Hh + 1948440;
+        const alpha = Int((Z - 1867216.25) / 36524.25);
+        const A = Z < 2299161 ? Z : Z + 1 + alpha - Int(alpha / 4);
+        const B = A + 1524;
+        const C = Int((B - 122.1) / 365.25);
+        const D = Int(365.25 * C);
+        const E = Int((B - D) / 30.6001);
+        const Dm = Int(B - D - Int(30.6001 * E));
+        const Mm = E < 14 ? E - 1 : E - 13;
+        const Ym = Mm > 2 ? C - 4716 : C - 4715;
+        const L = Z + 16;
+        const Hr = L % 7;
+        const Ps = L % 5;
+        return `Hari = ${namaHari[Hr]} ${namaPasaran[Ps]}, ${Dm} ${namaBulanM[Mm]} ${Ym} M / ${H} ${namaBulanH[m]} ${Y} H`;
+    }
+
+    function BtHitungM() {
+        let tgl = document.getElementById("tglM").value * 1;
+        let bln = document.getElementById("blnM").value * 1;
+        let thn = document.getElementById("thnM").value * 1;
+        let hasilKonversi = MiladikeHijri(tgl, bln, thn);
+        let pm = getPranotoMongso(tgl, bln);
+        let saka = thn - 78;
+        document.getElementById("Hasil1").innerHTML = hasilKonversi + 
+            `<span class='pm-detail'>Pranoto Mongso: ${pm}</span>` +
+            `<span class='pm-detail'>Tahun Saka: ${saka} Saka</span>`;
+    }
+
+    function BtHitungH() {
+        let tgl = document.getElementById("tglH").value * 1;
+        let bln = document.getElementById("blnH").value * 1;
+        let thn = document.getElementById("thnH").value * 1;
+        document.getElementById("Hasil2").innerHTML = HijrikeMiladi(tgl, bln, thn);
+    }
+</script>
+</body>
+</html>
